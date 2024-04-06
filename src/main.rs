@@ -1,10 +1,7 @@
-use ::mongodb::Client;
 use actix_web::{
-    web::{self, Data},
-    App, HttpRequest, HttpResponse, HttpServer, Responder,
+    web::{self},
+    App, HttpServer,
 };
-use serde::Deserialize;
-use serde_json::json;
 
 mod auth;
 mod mongodb;
