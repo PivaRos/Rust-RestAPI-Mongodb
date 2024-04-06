@@ -6,11 +6,11 @@ use actix_web::{
 use serde::Deserialize;
 use serde_json::json;
 
+mod auth;
 mod mongodb;
+mod structs;
 
-struct AppData {
-    mongodb_client: Client,
-}
+use crate::structs::AppData;
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
@@ -26,24 +26,9 @@ async fn main() -> std::io::Result<()> {
     HttpServer::new(move || {
         App::new()
             .app_data(app_data.clone())
-            .route("/auth/login", web::post().to(login))
+            .route("/auth/login", web::post().to(auth::login))
     })
     .bind("127.0.0.1:8080")?
     .run()
     .await
-}
-
-#[derive(Debug, Deserialize)]
-struct ExpectedData {
-    password: String,
-}
-
-async fn login(body: web::Json<ExpectedData>, data: web::Data<AppData>) -> impl Responder {
-    let password = &body.password;
-    if password == "thisismypassword12" {
-        //*return token
-        HttpResponse::Ok().json(json!({"token":"this-is-your-token"}))
-    } else {
-        HttpResponse::BadRequest().body("this is not the password")
-    }
 }
